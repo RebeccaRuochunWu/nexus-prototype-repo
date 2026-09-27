@@ -1,0 +1,7 @@
+{
+  "name": "nexus-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node tests/walkthrough.mjs" },
+  "devDependencies": { "playwright": "^1.55.0" }
+}
