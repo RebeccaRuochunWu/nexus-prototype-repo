@@ -8,7 +8,7 @@ Supporting notes (Task 1–3, buyer message, ≤800 words): [`NOTES.md`](NOTES.m
 
 1. Download or clone this repo and open `index.html` in a browser. No install or server is needed.
 2. Go to **QC report & tests**. The top table is the **task QC report**: it grades the tasks, and C01 and D01 are expected to fail. The bottom table has the **platform tests**: click **Run platform tests** to run 20 checks that Nexus itself behaves correctly (for example, that it blocks accepting C01).
-3. Walk the flow by hand in **1 · Tasks & review**. Each task page follows the order ① definition → ② run & grader verdict (automatic) → ③ reviewer check (you, the final gate) → ④ QC gates → ⑤ decision.
+3. Walk the flow by hand in **1 · Tasks & review**. Each task page follows the order ① author → ② run & grade (automatic) → ③ reviewer check (you, the final gate) → ④ decision (QC gates, then accept or return) → ⑤ collect. The badge on each task in the sidebar names the step it is waiting on, e.g. “next: ③ reviewer check”.
    - **Accept path:** open **B01**, click **Confirm reviewer check**, enter a reason, and click **Accept**.
    - **Return, edit, re-review:** open **C01**, confirm the check (Accept stays blocked by G1–G4), then **Return** with a reason. Click **Edit**, fix the initial state, and save as **C01@v2**. Record a new run (②), set the reviewer check (cause `model`, verdict `agrees`, tick reset and reference), confirm it, then **Accept**.
    - **Collect:** go to **2 · Collections → Build**. It is disabled until something is accepted, and it pins `B01@v1` and `C01@v2` with their hashes.

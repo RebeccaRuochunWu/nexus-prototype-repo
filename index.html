@@ -218,7 +218,7 @@ function latestVersion(task) { return task.versions[task.versions.length - 1]; }
 function reviewsFor(state, key) { return state.reviews.filter(r => r.version_key === key); }
 function versionStatus(state, key) {
   const rs = reviewsFor(state, key);
-  if (!rs.length) return "needs review";
+  if (!rs.length) return "awaiting decision";
   return rs[rs.length - 1].decision === "accept" ? "accepted" : "returned";
 }
 const runIsCurrent = v => v.run.run_for === v.key;
@@ -399,6 +399,16 @@ let state = makeState();
 const ui = { view:"tasks", taskId:"B01", versionKey:null, editing:false, flash:null, tests:null, scope:["B","C","D"] };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 const badge = (cls, txt) => `<span class="badge ${cls}">${esc(txt)}</span>`;
+// Where a version is in the workflow, named by the step number shown in the stepper.
+function stage(v) {
+  const st = versionStatus(state, v.key);
+  if (st === "accepted") return { cls:"b-accepted", label:"④ accepted", tip:"A reviewer accepted this version. It can ship in ⑤ Collect." };
+  if (st === "returned") return { cls:"b-returned", label:"④ returned", tip:"A reviewer returned this version. Edit it (①) to create a fixed version." };
+  if (!runIsCurrent(v)) return { cls:"b-pending", label:"next: ② re-run", tip:"The definition changed, so this version must be run and graded again." };
+  if (!checkIsConfirmed(v)) return { cls:"b-pending", label:"next: ③ reviewer check", tip:"The grader has scored the run. A reviewer must now verify the facts before a decision is possible." };
+  return { cls:"b-needs", label:"next: ④ decision", tip:"The reviewer check is done. Accept or return this version." };
+}
+const stageBadge = v => { const x = stage(v); return `<span class="badge ${x.cls}" title="${esc(x.tip)}">${esc(x.label)}</span>`; };
 const statusBadge = s => badge(s==="accepted"?"b-accepted":s==="returned"?"b-returned":"b-needs", s);
 const tip = (label, key) => `<span class="tip" tabindex="0" data-tip="${esc(FIELD_TIPS[key])}">${esc(label)}</span>`;
 function flash(kind, msg) { ui.flash = { kind, msg }; }
@@ -420,7 +430,7 @@ function stepper(t, v) {
     ${s("done", "① Author", `${v.key} saved`)}
     ${s(run ? "done" : "now", "② Run & grade", run ? `Grader: ${esc(v.run.grader_verdict)}` : "Needs re-run")}
     ${s(chk ? "done" : run ? "now" : "", "③ Reviewer check", chk ? `Confirmed by ${esc(v.check.confirmed_by)}` : "Pending — you are the final gate")}
-    ${s(st === "accepted" ? "done" : st === "returned" ? "blocked" : chk ? (fails.length ? "blocked" : "now") : "", "④ Decision", st !== "needs review" ? st : chk ? (fails.length ? `Accept blocked (${fails.join(", ")})` : "Ready to accept") : "Waiting for ③")}
+    ${s(st === "accepted" ? "done" : st === "returned" ? "blocked" : chk ? (fails.length ? "blocked" : "now") : "", "④ Decision", st !== "awaiting decision" ? st : chk ? (fails.length ? `Accept blocked (${fails.join(", ")})` : "Ready to accept") : "Waiting for ③")}
     ${s(ship ? "done" : "", "⑤ Collect", ship ? `Ships as ${ship.key}` : "Only accepted versions ship")}
   </div>`;
 }
@@ -432,8 +442,8 @@ function viewTasks() {
   const list = Object.values(state.tasks).map(x => { const lv = latestVersion(x);
     return `<button data-act="task" data-id="${x.task_id}" class="${x.task_id===t.task_id?"sel":""}">
       <b>${x.task_id}</b> <span class="muted small">${esc(x.pool_label)}</span><br>${esc(x.title)}<br>
-      <span class="mono muted">${lv.key}</span> ${statusBadge(versionStatus(state, lv.key))} ${checkIsConfirmed(lv) ? "" : badge("b-pending","check pending")}</button>`; }).join("");
-  const chips = t.versions.map(x => `<button class="chip ${x.key===v.key?"sel":""}" data-act="ver" data-k="${x.key}">${x.key} · ${versionStatus(state,x.key)}</button>`).join("");
+      <span class="mono muted">${lv.key}</span> ${stageBadge(lv)}</button>`; }).join("");
+  const chips = t.versions.map(x => `<button class="chip ${x.key===v.key?"sel":""}" data-act="ver" data-k="${x.key}">${x.key} · ${esc(stage(x).label)}</button>`).join("");
   const g = gates(state, v.key), allPass = g.every(x => x.pass && !x.pending), anyPending = g.some(x => x.pending);
   const history = state.reviews.filter(r => r.version_key.startsWith(t.task_id + "@")).map(r =>
     `<tr><td class="mono">${r.version_key}<br><span class="muted">#${r.hash}</span></td><td>${statusBadge(r.decision==="accept"?"accepted":"returned")}</td><td>${esc(r.reason)}</td>
@@ -451,19 +461,19 @@ function viewTasks() {
         <div class="chips">${chips}</div>
         ${stepper(t, v)}
       </div>
-      <div class="panel"><h2>① Task definition</h2><p class="sub">Written by an author. Hover a field name for what it means.</p>
+      <div class="panel"><h2>① Author · task definition</h2><p class="sub">Written by an author. Hover a field name for what it means.</p>
         ${ui.editing && isLatest ? editForm(t, v) : definitionView(t, v, isLatest)}</div>
-      <div class="panel"><h2>② Run &amp; grader verdict ${badge("b-owner","Runner · automatic")} ${runIsCurrent(v) ? badge("b-ok","graded") : badge("b-pending","needs re-run")}</h2>
+      <div class="panel"><h2>② Run &amp; grade · grader verdict ${badge("b-owner","Runner · automatic")} ${runIsCurrent(v) ? badge("b-ok","graded") : badge("b-pending","needs re-run")}</h2>
         <p class="sub">The runner executes the agent in the sandbox and the grader scores the run automatically. No human is involved in this step.</p>
         ${runForm(v, isLatest)}</div>
-      <div class="panel ${runIsCurrent(v) && !checkIsConfirmed(v) && isLatest ? "focus" : ""}"><h2>③ Reviewer check ${badge("b-owner","Expert reviewer · you")} ${checkIsConfirmed(v) ? badge("b-ok", "confirmed") : badge("b-pending","pending reviewer check")}</h2>
+      <div class="panel ${runIsCurrent(v) && !checkIsConfirmed(v) && isLatest ? "focus" : ""}"><h2>③ Reviewer check · verify the facts ${badge("b-owner","Expert reviewer · you")} ${checkIsConfirmed(v) ? badge("b-ok", "confirmed") : badge("b-pending","pending reviewer check")}</h2>
         <p class="sub">The grader has already scored the agent. You are the final gate: compare the agent's final tool state with the grader's verdict, and confirm the environment and task are valid. These answers drive G1–G4.</p>
         ${checkForm(v, isLatest)}</div>
-      <div class="panel"><h2>④ QC gates (rules v${state.rules_version})</h2>
+      <div class="panel"><h2>④ Decision · QC gates (rules v${state.rules_version})</h2>
         <p class="sub">Computed from ① ② ③. The badge shows whose evidence each gate relies on. Accept needs every gate ✓.</p>
         ${g.map(gateRow).join("")}
       </div>
-      <div class="panel"><h2>⑤ Decision</h2>
+      <div class="panel"><h2>④ Decision · accept or return</h2>
         ${!isLatest ? `<div class="muted">Select the latest version to decide.</div>` : `
         <div>Current status: ${statusBadge(st)}</div>
         <div class="row"><div><label for="rvName">Reviewer</label><input type="text" id="rvName" value="expert-1"></div></div>
@@ -649,7 +659,7 @@ document.addEventListener("click", ev => {
     else if (act === "confirmCheck") {
       confirmReviewerCheck(state, ui.versionKey, { outcome_verified:$("ckOutcome").value, failure_cause:$("ckCause").value,
         reset_verified:$("ckReset").checked, reference_solved:$("ckRef").checked, reference_evidence:$("ckRefTxt").value.trim() }, $("rvName") ? $("rvName").value.trim() : "expert-1");
-      flash("ok", `Reviewer check confirmed for ${ui.versionKey}. See the gates (④) and decide (⑤).`);
+      flash("ok", `Reviewer check confirmed for ${ui.versionKey}. Next: ④ decision — check the gates, then accept or return.`);
     }
     else if (act === "accept" || act === "return") {
       const r = recordReview(state, ui.versionKey, act, $("rvReason").value, $("rvName").value.trim());
