@@ -35,6 +35,7 @@ await shot("0-qc-report-and-platform-tests");
 // 2. Accepted path: B01 useful model failure
 await nav("tasks");
 await openTask("B01");
+ok("Each of the 5 workflow steps has a hover explanation", (await page.locator('.step .tip[data-tip]').evaluateAll(els => els.filter(e => e.dataset.tip.length > 40).length)) === 5);
 ok("B01 accept disabled while reviewer check is pending", !(await page.isEnabled('[data-act="accept"]')));
 ok("B01 shows 'pending reviewer check'", (await page.content()).includes("pending reviewer check"));
 await confirmCheck();

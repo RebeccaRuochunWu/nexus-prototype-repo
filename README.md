@@ -26,7 +26,7 @@ Supporting notes (Task 1–3, buyer message, ≤800 words): [`NOTES.md`](NOTES.m
 ## Verification
 
 - Platform tests in the app: 20/20 pass.
-- `tests/walkthrough.mjs` drives the real UI in headless Chromium and checks 23 assertions, including the task QC report, the before/after collections, and the storage tree. All 23 pass. To run it: `npm i playwright && node tests/walkthrough.mjs`. Screenshots are in `tests/screens/`.
+- `tests/walkthrough.mjs` drives the real UI in headless Chromium and checks 24 assertions, including the task QC report, the before/after collections, and the storage tree. All 24 pass. To run it: `npm i playwright && node tests/walkthrough.mjs`. Screenshots are in `tests/screens/`.
 
 ## Limitations
 

@@ -64,5 +64,5 @@
 2. **QC report & tests → Run platform tests** (20).
 3. Try B01 accept, C01 return/edit, then Collections under rules v1 vs v2.
 
-`tests/walkthrough.mjs` (headless UI test): 23/23 pass. In-memory state; refresh resets.
+`tests/walkthrough.mjs` (headless UI test): 24/24 pass. In-memory state; refresh resets.
 **Time:** ~3 h. **AI:** built with Claude (research, code, drafting); I reviewed and ran every flow.

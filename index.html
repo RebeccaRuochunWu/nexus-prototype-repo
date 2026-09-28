@@ -43,6 +43,8 @@
   .tip { position:relative; cursor:help; border-bottom:1px dotted var(--muted); }
   .tip::after { content:attr(data-tip); position:absolute; left:0; top:100%; margin-top:4px; width:280px; padding:8px 10px; background:#1d1f24; color:#f2f2f2; border-radius:6px; font-size:12px; line-height:1.4; white-space:normal; z-index:20; opacity:0; pointer-events:none; transition:opacity .12s; }
   .tip:hover::after, .tip:focus::after { opacity:1; }
+  .step .tip::after { font-weight:400; }
+  .step:nth-last-child(-n+2) .tip::after { left:auto; right:0; }
   .stepper { display:flex; gap:0; margin:10px 0 0; flex-wrap:wrap; }
   .step { flex:1; min-width:120px; padding:8px 10px; border:1px solid var(--line); background:#fafaf8; font-size:12px; }
   .step:first-child { border-radius:8px 0 0 8px; } .step:last-child { border-radius:0 8px 8px 0; }
@@ -165,6 +167,13 @@ const SEED = [
       reference_evidence:"An expert completed O-12 with Birch and linked Q-B7. The reviewer confirmed vendor, seats, and total in the saved order." } },
 ];
 
+const STEP_TIPS = {
+  "Author": "An author writes or edits the task definition. Every save creates a new immutable version with its own hash.",
+  "Run & grade": "Automatic. The runner resets the sandbox, the agent attempts the task, and the grader (the reward function) scores the run Pass or Fail. No human is involved.",
+  "Reviewer check": "You, the expert reviewer, verify the facts: did reset work, has anyone solved it, does the grader's verdict match the agent's final tool state, and what caused the outcome. Drives G1–G4.",
+  "Decision": "You decide whether this version ships: Accept (only when every QC gate passes) or Return for revision with a reason. Returning is allowed even when gates pass, e.g. low value for this buyer.",
+  "Collect": "Accepted versions can be batched into a collection for Aster. The collection pins the exact version and hash, so later edits never change what shipped.",
+};
 const FIELD_TIPS = {
   instruction: "The goal the agent is given, word for word. The agent reads this at the start of every run.",
   initial_state: "The sandbox state after every reset: the documents, records, and tool data the agent starts with. If reset does not reproduce this, the run is invalid (G1).",
@@ -405,7 +414,8 @@ function render() {
 function stepper(t, v) {
   const st = versionStatus(state, v.key), run = runIsCurrent(v), chk = checkIsConfirmed(v), ship = shippableVersion(state, t);
   const g = gates(state, v.key), fails = g.filter(x => !x.pass && !x.pending).map(x => x.id);
-  const s = (cls, title, sub) => `<div class="step ${cls}"><b>${title}</b>${sub}</div>`;
+  const s = (cls, title, sub) => { const k = title.replace(/^\S+\s/, "");
+    return `<div class="step ${cls}"><b class="tip" tabindex="0" data-tip="${esc(STEP_TIPS[k])}">${title}</b>${sub}</div>`; };
   return `<div class="stepper">
     ${s("done", "① Author", `${v.key} saved`)}
     ${s(run ? "done" : "now", "② Run & grade", run ? `Grader: ${esc(v.run.grader_verdict)}` : "Needs re-run")}
