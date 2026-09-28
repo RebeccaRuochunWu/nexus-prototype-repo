@@ -20,28 +20,38 @@
   .grid { display:grid; grid-template-columns: 260px 1fr; gap:20px; }
   @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; }
-  .panel h2 { font-size:14px; margin:0 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .panel h2 { font-size:14px; margin:0 0 4px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .panel .sub { color:var(--muted); font-size:12px; margin:0 0 10px; }
   .panel h3 { font-size:15px; margin:0 0 8px; }
+  .panel h4 { font-size:12px; margin:14px 0 6px; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; }
+  .panel.focus { border-color:var(--warn); box-shadow:0 0 0 2px var(--warnbg); }
   .tasklist button { display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px; margin-bottom:8px; cursor:pointer; font:inherit; }
   .tasklist button.sel { border-color:var(--accent); box-shadow:0 0 0 2px var(--accentbg); }
-  .muted { color:var(--muted); }
-  .small { font-size:12px; }
-  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; background:#eee; color:#444; white-space:nowrap; }
-  .b-accepted { background:var(--okbg); color:var(--ok); }
-  .b-returned { background:var(--badbg); color:var(--bad); }
-  .b-needs { background:var(--warnbg); color:var(--warn); }
-  .b-stale { background:#eee; color:#555; }
+  .muted { color:var(--muted); } .small { font-size:12px; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; background:#eee; color:#444; white-space:nowrap; text-transform:none; letter-spacing:0; }
+  .b-accepted, .b-ok { background:var(--okbg); color:var(--ok); }
+  .b-returned, .b-bad { background:var(--badbg); color:var(--bad); }
+  .b-needs, .b-pending { background:var(--warnbg); color:var(--warn); }
+  .b-owner { background:var(--accentbg); color:var(--accent); }
   .chips { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
   .chip { border:1px solid var(--line); background:var(--panel); border-radius:6px; padding:4px 8px; cursor:pointer; font:inherit; font-size:12px; }
   .chip.sel { border-color:var(--accent); color:var(--accent); font-weight:600; }
-  dl { display:grid; grid-template-columns: 150px 1fr; gap:6px 12px; margin:0; }
+  dl { display:grid; grid-template-columns: 170px 1fr; gap:6px 12px; margin:0; }
   dt { color:var(--muted); }
   dd { margin:0; white-space:pre-wrap; }
   code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; }
+  .tip { position:relative; cursor:help; border-bottom:1px dotted var(--muted); }
+  .tip::after { content:attr(data-tip); position:absolute; left:0; top:100%; margin-top:4px; width:280px; padding:8px 10px; background:#1d1f24; color:#f2f2f2; border-radius:6px; font-size:12px; line-height:1.4; white-space:normal; z-index:20; opacity:0; pointer-events:none; transition:opacity .12s; }
+  .tip:hover::after, .tip:focus::after { opacity:1; }
+  .stepper { display:flex; gap:0; margin:10px 0 0; flex-wrap:wrap; }
+  .step { flex:1; min-width:120px; padding:8px 10px; border:1px solid var(--line); background:#fafaf8; font-size:12px; }
+  .step:first-child { border-radius:8px 0 0 8px; } .step:last-child { border-radius:0 8px 8px 0; }
+  .step b { display:block; font-size:12px; }
+  .step.done { background:var(--okbg); border-color:#cfe8d9; } .step.now { background:var(--warnbg); border-color:#f1dfa6; } .step.blocked { background:var(--badbg); border-color:#f1cdc8; }
   .gate { display:flex; gap:10px; padding:6px 0; border-bottom:1px dashed var(--line); }
   .gate:last-child { border-bottom:none; }
   .gate .icon { width:20px; font-weight:700; }
-  .pass { color:var(--ok); } .fail { color:var(--bad); }
+  .pass { color:var(--ok); } .fail { color:var(--bad); } .pend { color:var(--warn); }
   label { display:block; font-weight:600; font-size:12px; margin:10px 0 4px; }
   input[type=text], textarea, select { width:100%; font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
   textarea { min-height:60px; }
@@ -51,16 +61,21 @@
   .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
   .btn.danger { background:var(--bad); color:#fff; border-color:var(--bad); }
   .btn:disabled { opacity:.45; cursor:not-allowed; }
-  .actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
   th { color:var(--muted); font-weight:600; }
   .note { background:var(--warnbg); color:var(--warn); padding:8px 10px; border-radius:6px; margin:8px 0; }
+  .info { background:var(--accentbg); color:#223a80; padding:8px 10px; border-radius:6px; margin:8px 0; }
   .err { background:var(--badbg); color:var(--bad); padding:8px 10px; border-radius:6px; margin:8px 0; }
   .okmsg { background:var(--okbg); color:var(--ok); padding:8px 10px; border-radius:6px; margin:8px 0; }
-  pre { background:#1d1f24; color:#e6e6e6; padding:12px; border-radius:8px; overflow:auto; max-height:520px; font-size:12px; }
   .checkbox { font-weight:400; display:flex; gap:6px; align-items:flex-start; margin:4px 0; }
   .checkbox input { margin-top:3px; }
+  .tree { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; }
+  .tree details { margin-left:14px; }
+  .tree summary { cursor:pointer; padding:1px 0; }
+  .tree .leaf { margin-left:28px; padding:1px 0; white-space:pre-wrap; word-break:break-word; }
+  .tree .k { color:#7a3e9d; } .tree .s { color:#1f7a45; } .tree .n { color:#2d4ea8; } .tree .b { color:#b3261e; } .tree .t { color:var(--muted); }
 </style>
 </head>
 <body>
@@ -80,9 +95,12 @@
 <script>
 /* =====================================================================
    1. SEED DATA — the four supplied Nexus records (A01–D01) plus B02,
-      a test case added for Task 3. Fields beyond the supplied ones
-      (success_clauses, grader.*, template_family, constraint_pattern,
-      evidence flags) are our extensions; see NOTES.md for assumptions.
+      a test case added for Task 3. Each version holds:
+        content — the task definition (what the agent sees + how it is graded)
+        run     — what the runner and grader produced (automatic)
+        check   — the expert reviewer's check of that run (manual; the final gate)
+      Reviewer checks start as drafts pre-filled from the record's
+      reference evidence and must be confirmed by a reviewer.
    ===================================================================== */
 const SEED = [
   { task_id:"A01", pool:"A", pool_label:"A — Support", title:"Update a support ticket after checking coverage",
@@ -93,8 +111,8 @@ const SEED = [
       tools:["coverage lookup","ticket editor"],
       success_clauses:["T-18 is marked eligible","T-18 note cites 2026-06-30"],
       grader:{ checks:"state", covers:[0,1], description:"Reads stored ticket fields." } },
-    evidence:{ reported_run_result:"Fail", failure_cause:"model", reset_verified:true, reference_solved:true, outcome_verified:"agrees",
-      run_evidence:"Lookup returned active coverage through 2026-06-30. The agent marked the ticket ineligible and wrote no note. The grader read the stored ticket fields.",
+    run:{ grader_verdict:"Fail", trace:"Lookup returned active coverage through 2026-06-30. The agent marked the ticket ineligible and wrote no note. The grader read the stored ticket fields." },
+    check:{ reset_verified:true, reference_solved:true, outcome_verified:"agrees", failure_cause:"model",
       reference_evidence:"A reviewer completed the task using the supplied tools. No setup errors were observed in this illustrative run." } },
 
   { task_id:"B01", pool:"B", pool_label:"B — Procurement", title:"Choose a supplier and prepare an order",
@@ -105,8 +123,8 @@ const SEED = [
       tools:["policy reader","quote search","order editor"],
       success_clauses:["O-7 selects Cedar","O-7 records 20 monitors","O-7 total is $4,900","O-7 links the Cedar quote"],
       grader:{ checks:"state", covers:[0,1,2,3], description:"State-based: reads O-7 supplier, quantity, total, and quote link." } },
-    evidence:{ reported_run_result:"Fail", failure_cause:"model", reset_verified:true, reference_solved:true, outcome_verified:"agrees",
-      run_evidence:"The agent read both quotes, selected Vale because it was cheaper, and saved the order. The state-based grader found the arrival-date constraint violated.",
+    run:{ grader_verdict:"Fail", trace:"The agent read both quotes, selected Vale because it was cheaper, and saved the order. The state-based grader found the arrival-date constraint violated." },
+    check:{ reset_verified:true, reference_solved:true, outcome_verified:"agrees", failure_cause:"model",
       reference_evidence:"An expert completed O-7 with Cedar and checked price, quantity, approval, date, and quote linkage. The runner recorded no setup or tool errors." } },
 
   { task_id:"C01", pool:"C", pool_label:"C — Incident response", title:"Recover a failed scheduled data job",
@@ -117,8 +135,8 @@ const SEED = [
       tools:["log reader","file browser","job runner","incident editor"],
       success_clauses:["The job completes","The expected output exists","The incident is closed with verification evidence"],
       grader:{ checks:"state", covers:[0,1,2], description:"Checks job status, output file, and incident record." } },
-    evidence:{ reported_run_result:"Fail", failure_cause:"environment", reset_verified:false, reference_solved:false, outcome_verified:"unchecked",
-      run_evidence:"The agent followed the recovery guide. Restore returned 'snapshot-17 not found'. The job never reached a runnable state; the grader reported failure.",
+    run:{ grader_verdict:"Fail", trace:"The agent followed the recovery guide. Restore returned 'snapshot-17 not found'. The job never reached a runnable state; the grader reported failure." },
+    check:{ reset_verified:false, reference_solved:false, outcome_verified:"unchecked", failure_cause:"environment",
       reference_evidence:"No successful reference run is available for this reset version. The missing snapshot has not been investigated." } },
 
   { task_id:"D01", pool:"D", pool_label:"D — Project coordination", title:"Move a release milestone across connected tools",
@@ -129,8 +147,8 @@ const SEED = [
       tools:["project board","calendar","document editor"],
       success_clauses:["Board milestone shows April 24","Calendar event shows April 24","Release document shows April 24","All three refer to release R-8"],
       grader:{ checks:"message", covers:[], description:"Matches the agent's completion message ('All updates complete')." } },
-    evidence:{ reported_run_result:"Pass", failure_cause:"grader", reset_verified:true, reference_solved:false, outcome_verified:"disagrees",
-      run_evidence:"The agent changed the board and calendar to April 24, left the document at April 17, and wrote 'All updates complete'. The grader passed the attempt by matching that completion message.",
+    run:{ grader_verdict:"Pass", trace:"The agent changed the board and calendar to April 24, left the document at April 17, and wrote 'All updates complete'. The grader passed the attempt by matching that completion message." },
+    check:{ reset_verified:true, reference_solved:false, outcome_verified:"disagrees", failure_cause:"grader",
       reference_evidence:"A reviewer confirmed the stale document state. No reference solution or corrected grader has been supplied." } },
 
   { task_id:"B02", pool:"B", pool_label:"B — Procurement", title:"Renew software seats within budget (Task 3 test case)",
@@ -142,23 +160,32 @@ const SEED = [
       tools:["policy reader","quote search","order editor"],
       success_clauses:["O-12 selects an approved vendor","O-12 records 50 seats","O-12 total is at or below $12,000","O-12 links the chosen vendor's approved quote"],
       grader:{ checks:"state", covers:[0,1,2], description:"State-based: reads O-12 vendor, seats, and total. Does not read the quote link." } },
-    evidence:{ reported_run_result:"Pass", failure_cause:"none", reset_verified:true, reference_solved:true, outcome_verified:"agrees",
-      run_evidence:"The agent chose Birch, 50 seats, $11,400 total, and saved O-12. The grader passed. The reviewer confirmed vendor, seats, and total in the saved order.",
-      reference_evidence:"An expert completed O-12 with Birch and linked Q-B7. No setup errors." } },
+    run:{ grader_verdict:"Pass", trace:"The agent chose Birch, 50 seats, $11,400 total, and saved O-12. The grader passed." },
+    check:{ reset_verified:true, reference_solved:true, outcome_verified:"agrees", failure_cause:"none",
+      reference_evidence:"An expert completed O-12 with Birch and linked Q-B7. The reviewer confirmed vendor, seats, and total in the saved order." } },
 ];
 
+const FIELD_TIPS = {
+  instruction: "The goal the agent is given, word for word. The agent reads this at the start of every run.",
+  initial_state: "The sandbox state after every reset: the documents, records, and tool data the agent starts with. If reset does not reproduce this, the run is invalid (G1).",
+  tools: "The only actions the agent can take in this sandbox.",
+  success: "What must be true in the final tool state for the task to count as done. Split into clauses so we can see which ones the grader actually checks.",
+  grader: "The automatic reward function. It scores every agent run, with no human involved. 'state' means it reads the final tool records; 'message' means it only reads what the agent said.",
+  family: "Which template this task was generated from. Variants of one template count once for diversity.",
+  pattern: "The constraint combination the task tests. This is what we mean by diversity, not industry labels.",
+  version: "Every edit creates a new immutable version. The hash is computed from the definition, so a collection can prove exactly which version it shipped.",
+};
+
 /* =====================================================================
-   2. CORE LOGIC — pure functions over `state`. The UI and the
-      self-checks both call these, so what the checks prove is what
-      the UI does.
+   2. CORE LOGIC — pure functions over `state`. The UI and the platform
+      tests both call these, so what the tests prove is what the UI does.
    ===================================================================== */
 const clone = o => JSON.parse(JSON.stringify(o));
-// FNV-1a 32-bit over the canonical JSON of a version's content. Same content → same hash.
 const canon = x => Array.isArray(x) ? `[${x.map(canon).join(",")}]`
   : x && typeof x === "object" ? `{${Object.keys(x).sort().map(k => JSON.stringify(k) + ":" + canon(x[k])).join(",")}}` : JSON.stringify(x);
+// FNV-1a 32-bit over the canonical JSON of a version's definition. Same content → same hash.
 function hashContent(content) {
-  const s = canon(content);
-  let h = 0x811c9dc5;
+  const s = canon(content); let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
   return h.toString(16).padStart(8, "0");
 }
@@ -167,12 +194,13 @@ function nowISO(state) { state.clock = (state.clock || 0) + 1; return new Date(D
 function makeState() {
   const state = { rules_version: 1, clock: 0, tasks: {}, reviews: [], collections: [], log: [] };
   for (const r of SEED) {
-    const { content, evidence, ...meta } = clone(r);
-    const v = { key: `${r.task_id}@v1`, n: 1, hash: hashContent(content), created_at: nowISO(state), author: "seed", change_note: "Imported from starter records",
-                content, evidence: { ...evidence, evidence_for: `${r.task_id}@v1` } };
+    const { content, run, check, ...meta } = clone(r);
+    const key = `${r.task_id}@v1`;
+    const v = { key, n: 1, hash: hashContent(content), created_at: nowISO(state), author: "seed", change_note: "Imported from starter records",
+                content, run: { ...run, run_for: key }, check: { ...check, confirmed_for: null, confirmed_by: null, confirmed_at: null } };
     state.tasks[r.task_id] = { ...meta, versions: [v] };
   }
-  logEvent(state, "seed", "Loaded 4 supplied records + B02 test case");
+  logEvent(state, "seed", "Loaded 4 supplied records + B02 test case; reviewer checks are drafts pending confirmation");
   return state;
 }
 function logEvent(state, type, detail) { state.log.push({ at: nowISO(state), type, detail }); }
@@ -184,55 +212,78 @@ function versionStatus(state, key) {
   if (!rs.length) return "needs review";
   return rs[rs.length - 1].decision === "accept" ? "accepted" : "returned";
 }
+const runIsCurrent = v => v.run.run_for === v.key;
+const checkIsConfirmed = v => v.check.confirmed_for === v.key;
+const uncovered = v => v.content.success_clauses.map((c, i) => i).filter(i => !v.content.grader.covers.includes(i));
 
-/* QC gates. Each is one of the three validities of an RL task, plus
-   training signal and evidence freshness. G5 only applies under rules v2. */
+/* QC gates. G0 is about the runner, G1–G4 are the expert reviewer's
+   judgement (pending until the reviewer check is confirmed), and G5 is
+   computed from the definition and only applies under rules v2. */
 function gates(state, key, rulesVersion = state.rules_version) {
-  const v = getVersion(state, key), e = v.evidence, g = v.content.grader;
+  const v = getVersion(state, key), c = v.check, g = v.content.grader;
+  const pending = !checkIsConfirmed(v);
   const out = [
-    { id:"G0", name:"Evidence matches this exact version",
-      pass: e.evidence_for === v.key,
-      why: e.evidence_for === v.key ? `Evidence recorded for ${v.key}.` : `Evidence was recorded for ${e.evidence_for}. Re-run and update evidence for ${v.key}.` },
-    { id:"G1", name:"Reset validity — run starts from the intended state",
-      pass: e.reset_verified === true && e.failure_cause !== "environment",
-      why: e.reset_verified !== true ? "Reset not verified (setup/reset error or unchecked)." : e.failure_cause === "environment" ? "Failure attributed to the environment." : "Reset verified; no setup errors." },
-    { id:"G2", name:"Task validity — solvable with the supplied tools",
-      pass: e.reference_solved === true,
-      why: e.reference_solved ? "A reference run solved it with the supplied tools." : "No successful reference run." },
-    { id:"G3", name:"Outcome validity — grader reads final tool state and agrees with review",
-      pass: g.checks === "state" && e.outcome_verified === "agrees",
-      why: g.checks !== "state" ? `Grader checks the ${g.checks}, not tool state.` : e.outcome_verified !== "agrees" ? `Reviewer check of final state: ${e.outcome_verified}.` : "State-based grader; reviewer confirmed its verdict." },
-    { id:"G4", name:"Training signal — outcome reflects the model, not the setup",
-      pass: e.failure_cause === "model" || (e.failure_cause === "none" && e.reported_run_result === "Pass"),
-      why: e.failure_cause === "model" ? "Genuine model failure — useful signal." : e.failure_cause === "none" ? "Verified pass." : `Outcome caused by ${e.failure_cause}, not the model.` },
+    { id:"G0", owner:"Runner", name:"Run and grader verdict are for this exact version",
+      pass: runIsCurrent(v), pending:false,
+      why: runIsCurrent(v) ? `Grader verdict recorded for ${v.key}.` : `Last run was for ${v.run.run_for}. Re-run ${v.key} so the grader scores this version.` },
+    { id:"G1", owner:"Reviewer", name:"Reset validity — run started from the intended state",
+      pass: c.reset_verified === true && c.failure_cause !== "environment", pending,
+      why: c.reset_verified !== true ? "Reset not verified (setup/reset error)." : c.failure_cause === "environment" ? "Failure attributed to the environment." : "Reset verified; no setup errors." },
+    { id:"G2", owner:"Reviewer", name:"Task validity — solvable with the supplied tools",
+      pass: c.reference_solved === true, pending,
+      why: c.reference_solved ? "A reference run solved it with the supplied tools." : "No successful reference run." },
+    { id:"G3", owner:"Reviewer", name:"Outcome validity — grader's verdict matches the final tool state",
+      pass: g.checks === "state" && c.outcome_verified === "agrees", pending,
+      why: g.checks !== "state" ? `Grader reads the ${g.checks}, not tool state.` : c.outcome_verified !== "agrees" ? `Reviewer's comparison of final state vs verdict: ${c.outcome_verified}.` : "Reviewer confirmed the grader's verdict against the final state." },
+    { id:"G4", owner:"Reviewer", name:"Training signal — outcome reflects the model, not the setup",
+      pass: c.failure_cause === "model" || (c.failure_cause === "none" && v.run.grader_verdict === "Pass"), pending,
+      why: c.failure_cause === "model" ? "Genuine model failure — useful signal." : c.failure_cause === "none" ? "Verified pass." : `Outcome caused by the ${c.failure_cause}, not the model.` },
   ];
   if (rulesVersion >= 2) {
-    const missing = v.content.success_clauses.map((c, i) => i).filter(i => !g.covers.includes(i));
-    out.push({ id:"G5", name:"Grader covers every success clause (rule v2)",
-      pass: g.checks === "state" && missing.length === 0,
-      why: missing.length ? `Not checked by grader: ${missing.map(i => `“${v.content.success_clauses[i]}”`).join(", ")}.` : "Every success clause is checked in final state." });
+    const miss = uncovered(v);
+    out.push({ id:"G5", owner:"System", name:"Grader covers every success clause (rule v2, added in Task 3)",
+      pass: g.checks === "state" && miss.length === 0, pending:false,
+      why: miss.length ? `Not checked by the grader: ${miss.map(i => `“${v.content.success_clauses[i]}”`).join(", ")}.` : "Every success clause is checked in final state." });
   }
   return out;
 }
-const gatesPass = (state, key, rv) => gates(state, key, rv).every(x => x.pass);
+const gatesPass = (state, key, rv) => gates(state, key, rv).every(x => x.pass && !x.pending);
 
+// Runner stand-in: records a new run of this version and the grader's verdict.
+// A new run invalidates any earlier reviewer check of this version.
+function recordRun(state, key, patch) {
+  const v = getVersion(state, key);
+  Object.assign(v.run, patch, { run_for: key });
+  if (v.check.confirmed_for === key) { v.check.confirmed_for = null; v.check.confirmed_by = null; v.check.confirmed_at = null; }
+  logEvent(state, "run", `Runner recorded ${key}: grader verdict ${v.run.grader_verdict}`);
+}
+// The expert reviewer's check — the final gate on the grader's verdict.
+function confirmReviewerCheck(state, key, fields, reviewer) {
+  const v = getVersion(state, key);
+  if (!runIsCurrent(v)) throw new Error(`No run of ${key} to check yet. Re-run it first (G0).`);
+  Object.assign(v.check, fields, { confirmed_for: key, confirmed_by: reviewer || "reviewer", confirmed_at: nowISO(state) });
+  logEvent(state, "check", `Reviewer check confirmed for ${key} by ${v.check.confirmed_by}`);
+}
 function recordReview(state, key, decision, reason, reviewer) {
   if (!["accept","return"].includes(decision)) throw new Error("Decision must be accept or return.");
   if (!reason || reason.trim().length < 15) throw new Error("Give a reason of at least 15 characters that cites the evidence.");
   const v = getVersion(state, key);
-  if (latestVersion(state.tasks[key.split("@")[0]]).key !== key) throw new Error(`Only the latest version can be reviewed.`);
+  if (latestVersion(state.tasks[key.split("@")[0]]).key !== key) throw new Error("Only the latest version can be reviewed.");
   const g = gates(state, key);
-  if (decision === "accept" && !g.every(x => x.pass)) throw new Error("Accept is blocked: failing gates " + g.filter(x => !x.pass).map(x => x.id).join(", ") + ".");
+  if (decision === "accept") {
+    if (g.some(x => x.pending)) throw new Error("Accept is blocked: the reviewer check is still pending.");
+    if (!g.every(x => x.pass)) throw new Error("Accept is blocked: failing gates " + g.filter(x => !x.pass).map(x => x.id).join(", ") + ".");
+  }
   const r = { id:`R${state.reviews.length + 1}`, version_key:key, hash:v.hash, decision, reason:reason.trim(), reviewer: reviewer || "reviewer",
               at: nowISO(state), rules_version: state.rules_version,
-              gates_snapshot: g.map(x => ({ id:x.id, pass:x.pass })), evidence_snapshot: clone(v.evidence) };
+              gates_snapshot: g.map(x => ({ id:x.id, pass:x.pass, pending:x.pending })), run_snapshot: clone(v.run), check_snapshot: clone(v.check) };
   state.reviews.push(r);
   logEvent(state, "review", `${key} → ${decision.toUpperCase()} by ${r.reviewer}: ${r.reason}`);
   return r;
 }
-
-// Editing never mutates a version: it appends v(n+1). Evidence is carried
-// over but marked as belonging to the old version, so G0 fails until re-run.
+// Editing never mutates a version: it appends v(n+1). The old run is kept
+// but marked as belonging to the old version (G0 fails until re-run), and
+// the reviewer check becomes a pending draft again.
 function saveNewVersion(state, taskId, newContent, changeNote, author) {
   const t = state.tasks[taskId], prev = latestVersion(t);
   if (!changeNote || changeNote.trim().length < 5) throw new Error("Add a change note.");
@@ -240,96 +291,95 @@ function saveNewVersion(state, taskId, newContent, changeNote, author) {
   if (h === prev.hash) throw new Error("No change to the task definition.");
   const n = prev.n + 1;
   const v = { key:`${taskId}@v${n}`, n, hash:h, created_at: nowISO(state), author: author || "author", change_note: changeNote.trim(),
-              content: clone(newContent), evidence: clone(prev.evidence) };
+              content: clone(newContent), run: clone(prev.run), check: { ...clone(prev.check), confirmed_for:null, confirmed_by:null, confirmed_at:null } };
   t.versions.push(v);
   logEvent(state, "edit", `${prev.key} → ${v.key} (${v.change_note})`);
   return v;
 }
-function updateEvidence(state, key, patch) {
-  // Reviews keep their own evidence snapshot, so later evidence edits never rewrite a past decision.
-  const v = getVersion(state, key);
-  Object.assign(v.evidence, patch, { evidence_for: key });
-  logEvent(state, "evidence", `Evidence updated for ${key}`);
+// Which version of a task would ship right now: newest ACCEPTED version that still passes the CURRENT rules.
+function shippableVersion(state, t) {
+  return t.versions.filter(v => versionStatus(state, v.key) === "accepted").reverse().find(v => gatesPass(state, v.key)) || null;
 }
-
-// Collection = immutable snapshot of pinned task versions.
-// Rule: per task, the newest version that is ACCEPTED and still passes the
-// CURRENT gates. Pools outside scope are excluded with a reason.
+// Collection = immutable snapshot of pinned task versions. It can only contain reviewer-accepted versions.
 function buildCollection(state, name, scopePools) {
   const items = [], excluded = [];
   for (const t of Object.values(state.tasks)) {
     if (!scopePools.includes(t.pool)) { excluded.push({ task_id:t.task_id, why:`Pool ${t.pool} is outside this collection's scope.` }); continue; }
     const accepted = t.versions.filter(v => versionStatus(state, v.key) === "accepted").reverse();
-    const pick = accepted.find(v => gatesPass(state, v.key));
-    const latest = latestVersion(t);
+    const pick = shippableVersion(state, t), latest = latestVersion(t);
     if (!pick) {
       const why = accepted.length ? `${accepted[0].key} was accepted but fails current rules: ${gates(state, accepted[0].key).filter(x=>!x.pass).map(x=>x.id).join(", ")}.`
-                                  : `No accepted version (latest ${latest.key} is ${versionStatus(state, latest.key)}).`;
+                                  : `Not accepted yet (latest ${latest.key} is ${versionStatus(state, latest.key)}).`;
       excluded.push({ task_id:t.task_id, why }); continue;
     }
     items.push({ version_key: pick.key, hash: pick.hash, pool: t.pool, template_family: t.template_family, constraint_pattern: t.constraint_pattern,
                  note: pick.key !== latest.key ? `Newer ${latest.key} is ${versionStatus(state, latest.key)}; pinned ${pick.key}.` : "" });
   }
-  const families = new Set(items.map(i => i.template_family));
+  if (!items.length) throw new Error("Nothing to ship: no task in scope has an accepted version that passes the current rules. Review tasks first.");
   const c = { id:`COL-${state.collections.length + 1}`, name: name || `Aster pilot batch ${state.collections.length + 1}`, built_at: nowISO(state),
               rules_version: state.rules_version, scope: scopePools.slice(), items, excluded,
-              summary: { tasks: items.length, distinct_patterns: families.size } };
+              summary: { tasks: items.length, distinct_patterns: new Set(items.map(i => i.template_family)).size } };
   state.collections.push(Object.freeze(clone(c)));
-  logEvent(state, "collection", `${c.id} built with ${items.length} task version(s): ${items.map(i=>i.version_key).join(", ") || "none"}`);
+  logEvent(state, "collection", `${c.id} built with ${items.length} task version(s): ${items.map(i=>i.version_key).join(", ")}`);
   return c;
 }
 
 /* =====================================================================
-   3. SELF-CHECKS — run the required flows on a fresh copy of the seed.
+   3. PLATFORM TESTS — check that Nexus itself behaves correctly
+      (blocks what it should block, pins versions, freezes snapshots).
+      They do NOT grade task quality; see the Task QC report for that.
    ===================================================================== */
-function runSelfChecks() {
+function runPlatformTests() {
   const S = makeState(), res = [];
-  const check = (name, fn) => { try { const ok = fn(); res.push({ name, ok: !!ok }); } catch (e) { res.push({ name, ok:false, err:e.message }); } };
-  const throws = fn => { try { fn(); return false; } catch { return true; } };
+  const test = (expect, fn) => { try { const got = fn(); res.push({ expect, ok: !!got.ok, got: got.got }); } catch (e) { res.push({ expect, ok:false, got:"threw: " + e.message }); } };
+  const blocked = fn => { try { fn(); return null; } catch (e) { return e.message; } };
   const scope = ["B","C","D"];
+  const confirm = k => confirmReviewerCheck(S, k, {}, "t");
 
-  check("Empty collection before any review", () => buildCollection(S, "t0", scope).items.length === 0);
-  check("B01 (useful model failure) passes all gates and can be accepted", () => { recordReview(S, "B01@v1", "accept", "Genuine model failure: ignored April 20 arrival constraint; state grader correct.", "t"); return versionStatus(S, "B01@v1") === "accepted"; });
-  check("Accept without a reason is rejected", () => throws(() => recordReview(S, "A01@v1", "accept", "", "t")));
-  check("C01 accept is blocked (reset + task validity)", () => throws(() => recordReview(S, "C01@v1", "accept", "trying to accept a broken reset", "t")));
-  check("C01 can be returned with a reason", () => recordReview(S, "C01@v1", "return", "snapshot-17 missing after reset; no reference run.", "t").decision === "return");
-  check("D01 false pass is blocked by outcome validity", () => throws(() => recordReview(S, "D01@v1", "accept", "trying to accept message grader", "t")));
+  test("Collection cannot be built before anything is accepted", () => { const m = blocked(() => buildCollection(S, "t0", scope)); return { ok: !!m, got: m ? "blocked" : "built" }; });
+  test("Accept is blocked while the reviewer check is pending", () => { const m = blocked(() => recordReview(S, "B01@v1", "accept", "Genuine model failure on arrival date.", "t")); return { ok: /pending/.test(m||""), got: m || "accepted" }; });
+  test("After the reviewer confirms, B01 (useful model failure) can be accepted", () => { confirm("B01@v1"); recordReview(S, "B01@v1", "accept", "Genuine model failure: ignored April 20 arrival constraint; state grader correct.", "t"); const s = versionStatus(S, "B01@v1"); return { ok: s === "accepted", got: s }; });
+  test("Accept without a reason is rejected", () => { confirm("A01@v1"); const m = blocked(() => recordReview(S, "A01@v1", "accept", "", "t")); return { ok: !!m, got: m ? "rejected" : "accepted" }; });
+  test("C01 (missing snapshot) cannot be accepted — G1–G4 fail", () => { confirm("C01@v1"); const m = blocked(() => recordReview(S, "C01@v1", "accept", "trying to accept a broken reset", "t")); return { ok: /G1, G2, G3, G4/.test(m||""), got: m || "accepted" }; });
+  test("C01 can be returned for revision with a reason", () => { const r = recordReview(S, "C01@v1", "return", "snapshot-17 missing after reset; no reference run.", "t"); return { ok: r.decision === "return", got: versionStatus(S, "C01@v1") }; });
+  test("D01 (false pass) cannot be accepted — G3 fails (and G2, G4)", () => { confirm("D01@v1"); const m = blocked(() => recordReview(S, "D01@v1", "accept", "trying to accept message grader", "t")); return { ok: /G3/.test(m||""), got: m || "accepted" }; });
   let c1;
-  check("Collection contains only accepted versions (B01@v1)", () => { c1 = buildCollection(S, "t1", scope); return c1.items.map(i=>i.version_key).join() === "B01@v1"; });
-  check("Out-of-scope pool A is excluded with a reason", () => c1.excluded.some(x => x.task_id === "A01" && /scope/.test(x.why)));
-  check("Edit creates C01@v2 with a new hash; v1 unchanged", () => {
+  test("Collection contains only accepted versions → B01@v1", () => { c1 = buildCollection(S, "t1", scope); const got = c1.items.map(i=>i.version_key).join(", "); return { ok: got === "B01@v1", got }; });
+  test("Out-of-scope pool A is excluded with a reason", () => { const x = c1.excluded.find(x => x.task_id === "A01"); return { ok: !!x && /scope/.test(x.why), got: x ? x.why : "not excluded" }; });
+  test("Editing C01 creates C01@v2 with a new hash; C01@v1 is unchanged", () => {
     const v1 = getVersion(S, "C01@v1"), before = v1.hash;
     const nc = clone(v1.content); nc.initial_state = "Reset manifest restores snapshot-17; file verified present after reset.";
     const v2 = saveNewVersion(S, "C01", nc, "Fix reset manifest", "t");
-    return v2.key === "C01@v2" && v2.hash !== before && getVersion(S, "C01@v1").hash === before && hashContent(v1.content) === before; });
-  check("C01@v2 accept blocked until evidence is re-recorded for v2 (G0)", () => throws(() => recordReview(S, "C01@v2", "accept", "evidence not yet re-run for this version", "t")));
-  check("After re-run evidence, C01@v2 is accepted", () => {
-    updateEvidence(S, "C01@v2", { reported_run_result:"Fail", failure_cause:"model", reset_verified:true, reference_solved:true, outcome_verified:"agrees",
-      run_evidence:"Restore succeeded. Agent reran the job but closed the incident without checking the output.", reference_evidence:"Expert solved v2 end to end." });
+    return { ok: v2.key === "C01@v2" && v2.hash !== before && getVersion(S, "C01@v1").hash === before, got: `${v2.key} #${v2.hash}, v1 still #${getVersion(S, "C01@v1").hash}` }; });
+  test("C01@v2 cannot be reviewed until it is re-run and graded (G0)", () => { const m = blocked(() => confirm("C01@v2")); return { ok: /Re-run/.test(m||""), got: m || "confirmed" }; });
+  test("After re-run + reviewer check, C01@v2 is accepted", () => {
+    recordRun(S, "C01@v2", { grader_verdict:"Fail", trace:"Restore succeeded. Agent reran the job but closed the incident without checking the output." });
+    confirmReviewerCheck(S, "C01@v2", { reset_verified:true, reference_solved:true, outcome_verified:"agrees", failure_cause:"model", reference_evidence:"Expert solved v2 end to end." }, "t");
     recordReview(S, "C01@v2", "accept", "Reset fixed; model skipped output verification — real failure.", "t");
-    return versionStatus(S, "C01@v2") === "accepted"; });
+    return { ok: versionStatus(S, "C01@v2") === "accepted", got: versionStatus(S, "C01@v2") }; });
   let c2;
-  check("New collection pins C01@v2 (not v1)", () => { c2 = buildCollection(S, "t2", scope); return c2.items.some(i => i.version_key === "C01@v2") && !c2.items.some(i => i.version_key === "C01@v1"); });
-  check("Earlier collection snapshot is unchanged", () => S.collections[1].items.map(i=>i.version_key).join() === "B01@v1");
-  check("Editing accepted B01 keeps B01@v1 pinned and flags v2 pending", () => {
+  test("New collection pins C01@v2, not C01@v1", () => { c2 = buildCollection(S, "t2", scope); const got = c2.items.map(i=>i.version_key).join(", "); return { ok: /C01@v2/.test(got) && !/C01@v1/.test(got), got }; });
+  test("Earlier collection snapshot is unchanged", () => { const got = S.collections[0].items.map(i=>i.version_key).join(", "); return { ok: got === "B01@v1", got }; });
+  test("Editing accepted B01 keeps B01@v1 pinned and flags v2 as pending", () => {
     const nc = clone(getVersion(S, "B01@v1").content); nc.instruction += " Record the quote ID in the order note.";
     saveNewVersion(S, "B01", nc, "Add note requirement", "t");
-    const c = buildCollection(S, "t3", scope); const it = c.items.find(i => i.version_key.startsWith("B01"));
-    return it.version_key === "B01@v1" && it.hash === getVersion(S, "B01@v1").hash && /B01@v2/.test(it.note); });
-  check("Rules v1: B02 (partial-coverage grader) can be accepted and ships", () => {
-    recordReview(S, "B02@v1", "accept", "Verified pass: vendor, seats, total confirmed in final state.", "t");
-    return buildCollection(S, "t4", scope).items.some(i => i.version_key === "B02@v1"); });
-  check("Rules v2: B02@v1 is excluded from the rebuilt collection (G5)", () => {
-    S.rules_version = 2; const c = buildCollection(S, "t5", scope);
-    return !c.items.some(i => i.version_key.startsWith("B02")) && c.excluded.some(x => x.task_id === "B02" && /G5/.test(x.why)); });
-  check("Rules v2: B01@v1 and C01@v2 still ship (full coverage)", () => { const c = S.collections[S.collections.length-1]; return ["B01@v1","C01@v2"].every(k => c.items.some(i => i.version_key === k)); });
-  check("Fix B02 grader → v2 → re-review → ships as B02@v2", () => {
+    const it = buildCollection(S, "t3", scope).items.find(i => i.version_key.startsWith("B01"));
+    return { ok: it.version_key === "B01@v1" && /B01@v2/.test(it.note), got: `${it.version_key} — ${it.note}` }; });
+  test("Rules v1: B02 (grader skips one clause) can be accepted and ships", () => {
+    confirm("B02@v1"); recordReview(S, "B02@v1", "accept", "Verified pass: vendor, seats, total confirmed in final state.", "t");
+    const got = buildCollection(S, "t4", scope).items.map(i=>i.version_key).join(", "); return { ok: /B02@v1/.test(got), got }; });
+  test("Rules v2: B02@v1 is excluded from the rebuilt collection (G5)", () => {
+    S.rules_version = 2; const c = buildCollection(S, "t5", scope); const x = c.excluded.find(x => x.task_id === "B02");
+    return { ok: !c.items.some(i => i.version_key.startsWith("B02")) && !!x && /G5/.test(x.why), got: x ? x.why : "still shipped" }; });
+  test("Rules v2: B01@v1 and C01@v2 still ship (full coverage)", () => { const c = S.collections[S.collections.length-1]; const got = c.items.map(i=>i.version_key).join(", "); return { ok: ["B01@v1","C01@v2"].every(k => got.includes(k)), got }; });
+  test("Fix B02 grader → v2 → re-run → reviewer check → accept → ships as B02@v2", () => {
     const nc = clone(getVersion(S, "B02@v1").content); nc.grader = { ...nc.grader, covers:[0,1,2,3], description:"Reads vendor, seats, total, and quote link." };
     saveNewVersion(S, "B02", nc, "Grader now checks quote link", "t");
-    updateEvidence(S, "B02@v2", { reported_run_result:"Fail", failure_cause:"model", outcome_verified:"agrees", run_evidence:"Re-run under full grader: agent omitted the quote link; grader now fails it." });
+    recordRun(S, "B02@v2", { grader_verdict:"Fail", trace:"Re-run under full grader: agent omitted the quote link; grader now fails it." });
+    confirmReviewerCheck(S, "B02@v2", { failure_cause:"model", outcome_verified:"agrees" }, "t");
     recordReview(S, "B02@v2", "accept", "Full-coverage grader catches missing quote link — real model failure.", "t");
-    return buildCollection(S, "t6", scope).items.some(i => i.version_key === "B02@v2"); });
-  check("Same content → same hash (hash is deterministic)", () => hashContent(clone(getVersion(S, "A01@v1").content)) === getVersion(S, "A01@v1").hash);
+    const got = buildCollection(S, "t6", scope).items.map(i=>i.version_key).join(", "); return { ok: /B02@v2/.test(got), got }; });
+  test("Same content → same hash (hash is deterministic)", () => { const h = hashContent(clone(getVersion(S, "A01@v1").content)); return { ok: h === getVersion(S, "A01@v1").hash, got: "#" + h }; });
   return res;
 }
 
@@ -337,18 +387,32 @@ function runSelfChecks() {
    4. UI
    ===================================================================== */
 let state = makeState();
-const ui = { view:"tasks", taskId:"B01", versionKey:null, editing:false, flash:null, checks:null, scope:["B","C","D"] };
+const ui = { view:"tasks", taskId:"B01", versionKey:null, editing:false, flash:null, tests:null, scope:["B","C","D"] };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-const statusBadge = s => `<span class="badge ${s==="accepted"?"b-accepted":s==="returned"?"b-returned":"b-needs"}">${esc(s)}</span>`;
+const badge = (cls, txt) => `<span class="badge ${cls}">${esc(txt)}</span>`;
+const statusBadge = s => badge(s==="accepted"?"b-accepted":s==="returned"?"b-returned":"b-needs", s);
+const tip = (label, key) => `<span class="tip" tabindex="0" data-tip="${esc(FIELD_TIPS[key])}">${esc(label)}</span>`;
 function flash(kind, msg) { ui.flash = { kind, msg }; }
 
 function render() {
   document.getElementById("rulesSel").value = String(state.rules_version);
-  document.getElementById("nav").innerHTML = [["tasks","Tasks & review"],["collections","Collections"],["checks","Self-checks"],["data","Data & log"]]
+  document.getElementById("nav").innerHTML = [["tasks","1 · Tasks & review"],["collections","2 · Collections"],["checks","QC report & tests"],["data","Data & log"]]
     .map(([k,l]) => `<button data-act="view" data-v="${k}" class="${ui.view===k?"active":""}">${l}</button>`).join("");
   const f = ui.flash ? `<div class="${ui.flash.kind==="err"?"err":"okmsg"}">${esc(ui.flash.msg)}</div>` : ""; ui.flash = null;
-  const app = document.getElementById("app");
-  app.innerHTML = f + ({ tasks:viewTasks, collections:viewCollections, checks:viewChecks, data:viewData }[ui.view])();
+  document.getElementById("app").innerHTML = f + ({ tasks:viewTasks, collections:viewCollections, checks:viewChecks, data:viewData }[ui.view])();
+}
+
+function stepper(t, v) {
+  const st = versionStatus(state, v.key), run = runIsCurrent(v), chk = checkIsConfirmed(v), ship = shippableVersion(state, t);
+  const g = gates(state, v.key), fails = g.filter(x => !x.pass && !x.pending).map(x => x.id);
+  const s = (cls, title, sub) => `<div class="step ${cls}"><b>${title}</b>${sub}</div>`;
+  return `<div class="stepper">
+    ${s("done", "① Author", `${v.key} saved`)}
+    ${s(run ? "done" : "now", "② Run & grade", run ? `Grader: ${esc(v.run.grader_verdict)}` : "Needs re-run")}
+    ${s(chk ? "done" : run ? "now" : "", "③ Reviewer check", chk ? `Confirmed by ${esc(v.check.confirmed_by)}` : "Pending — you are the final gate")}
+    ${s(st === "accepted" ? "done" : st === "returned" ? "blocked" : chk ? (fails.length ? "blocked" : "now") : "", "④ Decision", st !== "needs review" ? st : chk ? (fails.length ? `Accept blocked (${fails.join(", ")})` : "Ready to accept") : "Waiting for ③")}
+    ${s(ship ? "done" : "", "⑤ Collect", ship ? `Ships as ${ship.key}` : "Only accepted versions ship")}
+  </div>`;
 }
 
 function viewTasks() {
@@ -358,27 +422,15 @@ function viewTasks() {
   const list = Object.values(state.tasks).map(x => { const lv = latestVersion(x);
     return `<button data-act="task" data-id="${x.task_id}" class="${x.task_id===t.task_id?"sel":""}">
       <b>${x.task_id}</b> <span class="muted small">${esc(x.pool_label)}</span><br>${esc(x.title)}<br>
-      <span class="mono muted">${lv.key}</span> ${statusBadge(versionStatus(state, lv.key))}</button>`; }).join("");
+      <span class="mono muted">${lv.key}</span> ${statusBadge(versionStatus(state, lv.key))} ${checkIsConfirmed(lv) ? "" : badge("b-pending","check pending")}</button>`; }).join("");
   const chips = t.versions.map(x => `<button class="chip ${x.key===v.key?"sel":""}" data-act="ver" data-k="${x.key}">${x.key} · ${versionStatus(state,x.key)}</button>`).join("");
-  const g = gates(state, v.key), allPass = g.every(x => x.pass);
-  const c = v.content, e = v.evidence;
-  const clauses = c.success_clauses.map((s,i) => `<li>${esc(s)} ${c.grader.covers.includes(i) ? `<span class="pass small">✓ graded</span>` : `<span class="fail small">✗ not graded</span>`}</li>`).join("");
+  const g = gates(state, v.key), allPass = g.every(x => x.pass && !x.pending), anyPending = g.some(x => x.pending);
   const history = state.reviews.filter(r => r.version_key.startsWith(t.task_id + "@")).map(r =>
     `<tr><td class="mono">${r.version_key}<br><span class="muted">#${r.hash}</span></td><td>${statusBadge(r.decision==="accept"?"accepted":"returned")}</td><td>${esc(r.reason)}</td>
      <td class="small">${r.gates_snapshot.map(x=>`<span class="${x.pass?"pass":"fail"}">${x.id}${x.pass?"✓":"✗"}</span>`).join(" ")}<br>rules v${r.rules_version} · ${esc(r.reviewer)}<br>${r.at}</td></tr>`).join("");
-
-  const defn = ui.editing && isLatest ? editForm(t, v) : `
-    <dl>
-      <dt>Instruction</dt><dd>${esc(c.instruction)}</dd>
-      <dt>Initial state</dt><dd>${esc(c.initial_state)}</dd>
-      <dt>Tools</dt><dd>${c.tools.map(esc).join(", ")}</dd>
-      <dt>Success condition</dt><dd><ol style="margin:0;padding-left:18px">${clauses}</ol></dd>
-      <dt>Grader</dt><dd>checks <b>${esc(c.grader.checks)}</b> — ${esc(c.grader.description)}</dd>
-      <dt>Template family</dt><dd>${esc(t.template_family)}</dd>
-      <dt>Constraint pattern</dt><dd>${esc(t.constraint_pattern)}</dd>
-      <dt>Version</dt><dd class="mono">${v.key} · hash #${v.hash} · ${v.created_at} · by ${esc(v.author)} · “${esc(v.change_note)}”</dd>
-    </dl>
-    <div class="actions">${isLatest ? `<button class="btn" data-act="edit">Edit → save as ${t.task_id}@v${v.n+1}</button>` : `<span class="muted small">Older versions are read-only.</span>`}</div>`;
+  const gateRow = x => { const cls = x.pending ? "pend" : x.pass ? "pass" : "fail", icon = x.pending ? "⏳" : x.pass ? "✓" : "✗";
+    return `<div class="gate"><div class="icon ${cls}">${icon}</div><div><b>${x.id} ${esc(x.name)}</b> ${badge("b-owner", x.owner)}<br>
+      <span class="muted">${x.pending ? `Pending reviewer check. Draft says: ${x.pass ? "pass" : "fail"} — ${esc(x.why)}` : esc(x.why)}</span></div></div>`; };
 
   return `<div class="grid">
     <div class="tasklist">${list}</div>
@@ -387,58 +439,101 @@ function viewTasks() {
         <h3>${t.task_id} · ${esc(t.title)}</h3>
         <div class="muted small">${esc(t.pool_label)}${t.added_for ? ` · <b>${esc(t.added_for)}</b>` : ""}</div>
         <div class="chips">${chips}</div>
+        ${stepper(t, v)}
       </div>
-      <div class="panel"><h2>1 · Task definition</h2>${defn}</div>
-      <div class="panel"><h2>2 · Outcome evidence for ${v.key}</h2>${evidenceForm(v, isLatest)}</div>
-      <div class="panel"><h2>3 · QC gates (rules v${state.rules_version})</h2>
-        ${g.map(x => `<div class="gate"><div class="icon ${x.pass?"pass":"fail"}">${x.pass?"✓":"✗"}</div><div><b>${x.id} ${esc(x.name)}</b><br><span class="muted">${esc(x.why)}</span></div></div>`).join("")}
+      <div class="panel"><h2>① Task definition</h2><p class="sub">Written by an author. Hover a field name for what it means.</p>
+        ${ui.editing && isLatest ? editForm(t, v) : definitionView(t, v, isLatest)}</div>
+      <div class="panel"><h2>② Run &amp; grader verdict ${badge("b-owner","Runner · automatic")} ${runIsCurrent(v) ? badge("b-ok","graded") : badge("b-pending","needs re-run")}</h2>
+        <p class="sub">The runner executes the agent in the sandbox and the grader scores the run automatically. No human is involved in this step.</p>
+        ${runForm(v, isLatest)}</div>
+      <div class="panel ${runIsCurrent(v) && !checkIsConfirmed(v) && isLatest ? "focus" : ""}"><h2>③ Reviewer check ${badge("b-owner","Expert reviewer · you")} ${checkIsConfirmed(v) ? badge("b-ok", "confirmed") : badge("b-pending","pending reviewer check")}</h2>
+        <p class="sub">The grader has already scored the agent. You are the final gate: compare the agent's final tool state with the grader's verdict, and confirm the environment and task are valid. These answers drive G1–G4.</p>
+        ${checkForm(v, isLatest)}</div>
+      <div class="panel"><h2>④ QC gates (rules v${state.rules_version})</h2>
+        <p class="sub">Computed from ① ② ③. The badge shows whose evidence each gate relies on. Accept needs every gate ✓.</p>
+        ${g.map(gateRow).join("")}
       </div>
-      <div class="panel"><h2>4 · Review decision</h2>
-        ${!isLatest ? `<div class="muted">Select the latest version to review.</div>` : `
+      <div class="panel"><h2>⑤ Decision</h2>
+        ${!isLatest ? `<div class="muted">Select the latest version to decide.</div>` : `
         <div>Current status: ${statusBadge(st)}</div>
-        <div class="row">
-          <div><label for="rvName">Reviewer</label><input type="text" id="rvName" value="expert-1"></div>
-        </div>
+        <div class="row"><div><label for="rvName">Reviewer</label><input type="text" id="rvName" value="expert-1"></div></div>
         <label for="rvReason">Reason (cite the evidence)</label>
         <textarea id="rvReason" placeholder="e.g. Genuine model failure: agent ignored the April 20 arrival constraint; state grader is correct."></textarea>
         <div class="actions">
-          <button class="btn primary" data-act="accept" ${allPass?"":"disabled"} title="${allPass?"":"Blocked: fix failing gates first"}">Accept ${v.key}</button>
+          <button class="btn primary" data-act="accept" ${allPass?"":"disabled"}>Accept ${v.key}</button>
           <button class="btn danger" data-act="return">Return for revision</button>
-          ${allPass?"":`<span class="muted small">Accept is blocked while any gate fails.</span>`}
+          ${allPass ? "" : `<span class="muted small">${anyPending ? "Accept unlocks after you confirm the reviewer check (③)." : "Accept is blocked while any gate fails. Return it with a reason instead."}</span>`}
         </div>`}
       </div>
-      <div class="panel"><h2>Review history</h2>${history ? `<table><tr><th>Version</th><th>Decision</th><th>Reason</th><th>Gate snapshot</th></tr>${history}</table>` : `<span class="muted">No reviews yet.</span>`}</div>
+      <div class="panel"><h2>Review history</h2>${history ? `<table><tr><th>Version</th><th>Decision</th><th>Reason</th><th>Gate snapshot</th></tr>${history}</table>` : `<span class="muted">No decisions yet.</span>`}</div>
     </div></div>`;
 }
 
-function evidenceForm(v, editable) {
-  const e = v.evidence, dis = editable ? "" : "disabled";
-  const stale = e.evidence_for !== v.key ? `<div class="note">This evidence was recorded for <b>${esc(e.evidence_for)}</b>. Re-run the task and save evidence for ${v.key} before it can be accepted.</div>` : "";
-  const sel = (id, opts, cur) => `<select id="${id}" ${dis}>${opts.map(o => `<option ${String(o)===String(cur)?"selected":""}>${o}</option>`).join("")}</select>`;
+function definitionView(t, v, isLatest) {
+  const c = v.content, v2 = state.rules_version >= 2;
+  const clauses = c.success_clauses.map((s,i) => `<li>${esc(s)} ${c.grader.covers.includes(i) ? `<span class="pass small">✓ graded</span>`
+    : v2 ? `<span class="fail small">✗ not graded — blocks accept under rules v2 (G5)</span>` : `<span class="pend small">⚠ not graded — allowed under rules v1; blocked under v2 (G5)</span>`}</li>`).join("");
+  return `
+    <h4>What the agent sees</h4>
+    <dl>
+      <dt>${tip("Instruction","instruction")}</dt><dd>${esc(c.instruction)}</dd>
+      <dt>${tip("Initial state","initial_state")}</dt><dd>${esc(c.initial_state)}</dd>
+      <dt>${tip("Tools","tools")}</dt><dd>${c.tools.map(esc).join(", ")}</dd>
+    </dl>
+    <h4>How the grader scores the agent</h4>
+    <dl>
+      <dt>${tip("Success condition","success")}</dt><dd><ol style="margin:0;padding-left:18px">${clauses}</ol></dd>
+      <dt>${tip("Grader","grader")}</dt><dd>reads <b>${esc(c.grader.checks)}</b> — ${esc(c.grader.description)}</dd>
+    </dl>
+    <h4>Nexus metadata</h4>
+    <dl>
+      <dt>${tip("Template family","family")}</dt><dd>${esc(t.template_family)}</dd>
+      <dt>${tip("Constraint pattern","pattern")}</dt><dd>${esc(t.constraint_pattern)}</dd>
+      <dt>${tip("Version","version")}</dt><dd class="mono">${v.key} · hash #${v.hash} · ${v.created_at} · by ${esc(v.author)} · “${esc(v.change_note)}”</dd>
+    </dl>
+    <div class="actions">${isLatest ? `<button class="btn" data-act="edit">Edit → save as ${t.task_id}@v${v.n+1}</button>` : `<span class="muted small">Older versions are read-only.</span>`}</div>`;
+}
+
+function runForm(v, editable) {
+  const r = v.run, dis = editable ? "" : "disabled";
+  const stale = !runIsCurrent(v) ? `<div class="note">The last run was of <b>${esc(r.run_for)}</b>. The definition changed, so ${v.key} must be re-run and re-graded. Record the new run below.</div>` : "";
   return `${stale}
     <div class="row">
-      <div><label>Reported run result</label>${sel("evResult",["Pass","Fail"],e.reported_run_result)}</div>
-      <div><label>Failure cause</label>${sel("evCause",["model","environment","grader","task ambiguity","none"],e.failure_cause)}</div>
-      <div><label>Reviewer check of final state</label>${sel("evOutcome",["agrees","disagrees","unchecked"],e.outcome_verified)}</div>
+      <div><label>Grader verdict</label><select id="runVerdict" ${dis}>${["Pass","Fail"].map(o => `<option ${o===r.grader_verdict?"selected":""}>${o}</option>`).join("")}</select></div>
+      <div><label>Run for version</label><input type="text" value="${esc(r.run_for)}" disabled></div>
+    </div>
+    <label>Agent trace summary</label><textarea id="runTrace" ${dis}>${esc(r.trace)}</textarea>
+    ${editable ? `<div class="actions"><button class="btn" data-act="saveRun">Record run of ${v.key}</button><span class="muted small">Manual entry stands in for the runner. Recording a run resets the reviewer check.</span></div>` : ""}`;
+}
+
+function checkForm(v, editable) {
+  const c = v.check, dis = editable && runIsCurrent(v) ? "" : "disabled";
+  const sel = (id, opts, cur) => `<select id="${id}" ${dis}>${opts.map(o => `<option ${String(o)===String(cur)?"selected":""}>${o}</option>`).join("")}</select>`;
+  const head = checkIsConfirmed(v) ? `<div class="okmsg">Confirmed by ${esc(c.confirmed_by)} at ${c.confirmed_at}.</div>`
+    : !runIsCurrent(v) ? `<div class="note">Waiting for step ②: there is no graded run of ${v.key} to check yet.</div>`
+    : `<div class="note">Pending reviewer check. Fields are pre-filled as a draft from the record's reference evidence; verify them and confirm.</div>`;
+  return `${head}
+    <div class="row">
+      <div><label>Does the grader's verdict match the final state? (G3)</label>${sel("ckOutcome",["agrees","disagrees","unchecked"],c.outcome_verified)}</div>
+      <div><label>What caused the outcome? (G4)</label>${sel("ckCause",["model","environment","grader","task ambiguity","none"],c.failure_cause)}</div>
     </div>
     <div class="row">
-      <div><label class="checkbox"><input type="checkbox" id="evReset" ${e.reset_verified?"checked":""} ${dis}> Reset verified (no setup errors)</label></div>
-      <div><label class="checkbox"><input type="checkbox" id="evRef" ${e.reference_solved?"checked":""} ${dis}> Reference run solved it</label></div>
+      <div><label class="checkbox"><input type="checkbox" id="ckReset" ${c.reset_verified?"checked":""} ${dis}> Reset reproduced the initial state (G1)</label></div>
+      <div><label class="checkbox"><input type="checkbox" id="ckRef" ${c.reference_solved?"checked":""} ${dis}> A reference run solved it (G2)</label></div>
     </div>
-    <label>Run evidence</label><textarea id="evRun" ${dis}>${esc(e.run_evidence)}</textarea>
-    <label>Reference evidence</label><textarea id="evRefTxt" ${dis}>${esc(e.reference_evidence)}</textarea>
-    ${editable ? `<div class="actions"><button class="btn" data-act="saveEv">Save evidence for ${v.key}</button><span class="muted small">Manual entry stands in for the runner.</span></div>` : ""}`;
+    <label>Reference evidence</label><textarea id="ckRefTxt" ${dis}>${esc(c.reference_evidence)}</textarea>
+    ${editable && runIsCurrent(v) ? `<div class="actions"><button class="btn primary" data-act="confirmCheck">${checkIsConfirmed(v) ? "Update" : "Confirm"} reviewer check for ${v.key}</button></div>` : ""}`;
 }
 
 function editForm(t, v) {
   const c = v.content;
-  return `<div class="note">Saving creates <b>${t.task_id}@v${v.n+1}</b>. ${v.key} stays unchanged and any collection that pinned it keeps it.</div>
+  return `<div class="note">Saving creates <b>${t.task_id}@v${v.n+1}</b>. ${v.key} stays unchanged and any collection that pinned it keeps it. The new version must be re-run (②) and re-checked (③).</div>
     <label>Instruction</label><textarea id="edInstr">${esc(c.instruction)}</textarea>
     <label>Initial state</label><textarea id="edInit">${esc(c.initial_state)}</textarea>
     <label>Tools (comma-separated)</label><input type="text" id="edTools" value="${esc(c.tools.join(", "))}">
     <label>Success clauses (one per line)</label><textarea id="edClauses">${esc(c.success_clauses.join("\n"))}</textarea>
     <div class="row">
-      <div><label>Grader checks</label><select id="edChecks"><option ${c.grader.checks==="state"?"selected":""}>state</option><option ${c.grader.checks==="message"?"selected":""}>message</option></select></div>
+      <div><label>Grader reads</label><select id="edChecks"><option ${c.grader.checks==="state"?"selected":""}>state</option><option ${c.grader.checks==="message"?"selected":""}>message</option></select></div>
       <div><label>Grader description</label><input type="text" id="edGDesc" value="${esc(c.grader.description)}"></div>
     </div>
     <label>Clauses the grader checks</label>
@@ -449,47 +544,72 @@ function editForm(t, v) {
 }
 
 function viewCollections() {
-  const pools = ["A","B","C","D"];
-  const preview = Object.values(state.tasks).map(t => {
-    const acc = t.versions.filter(v => versionStatus(state, v.key) === "accepted").reverse();
-    const pick = acc.find(v => gatesPass(state, v.key));
-    return `<tr><td>${t.task_id}</td><td class="mono">${latestVersion(t).key} ${statusBadge(versionStatus(state, latestVersion(t).key))}</td>
-      <td class="mono">${!ui.scope.includes(t.pool) ? `<span class="muted">out of scope</span>` : pick ? `${pick.key} #${pick.hash}` : `<span class="fail">—</span>`}</td></tr>`; }).join("");
+  const rows = Object.values(state.tasks).map(t => {
+    const pick = shippableVersion(state, t), inScope = ui.scope.includes(t.pool);
+    return { t, pick, inScope, ships: inScope && !!pick }; });
+  const eligible = rows.filter(r => r.ships).length;
+  const preview = rows.map(({ t, pick, inScope }) => `<tr><td>${t.task_id}</td><td class="mono">${latestVersion(t).key} ${statusBadge(versionStatus(state, latestVersion(t).key))}</td>
+      <td class="mono">${!inScope ? `<span class="muted">out of scope</span>` : pick ? `<span class="pass">${pick.key} #${pick.hash}</span>` : `<span class="fail">— not accepted</span>`}</td></tr>`).join("");
   const cols = state.collections.slice().reverse().map(c => `
     <div class="panel"><h3>${c.id} · ${esc(c.name)} <span class="muted small">${c.built_at} · rules v${c.rules_version} · scope ${c.scope.join(", ")}</span></h3>
-      <div class="small muted">${c.summary.tasks} task version(s) · ${c.summary.distinct_patterns} distinct template famil${c.summary.distinct_patterns===1?"y":"ies"}</div>
+      <div class="small muted">${c.summary.tasks} task version(s) · ${c.summary.distinct_patterns} distinct template famil${c.summary.distinct_patterns===1?"y":"ies"} · frozen snapshot</div>
       <table><tr><th>Pinned version</th><th>Hash</th><th>Template family</th><th>Note</th></tr>
-      ${c.items.map(i => `<tr><td class="mono">${i.version_key}</td><td class="mono">#${i.hash}</td><td>${esc(i.template_family)}</td><td class="small">${esc(i.note)}</td></tr>`).join("") || `<tr><td colspan="4" class="muted">Empty</td></tr>`}</table>
+      ${c.items.map(i => `<tr><td class="mono">${i.version_key}</td><td class="mono">#${i.hash}</td><td>${esc(i.template_family)}</td><td class="small">${esc(i.note)}</td></tr>`).join("")}</table>
       ${c.excluded.length ? `<details><summary class="small">Excluded (${c.excluded.length})</summary><ul class="small">${c.excluded.map(x=>`<li><b>${x.task_id}</b>: ${esc(x.why)}</li>`).join("")}</ul></details>` : ""}
-      <details><summary class="small">Manifest JSON</summary><pre>${esc(JSON.stringify({ id:c.id, name:c.name, built_at:c.built_at, rules_version:c.rules_version, items:c.items.map(i=>({ version:i.version_key, hash:i.hash })) }, null, 2))}</pre></details>
+      <details><summary class="small">Manifest JSON</summary><div class="tree">${tree({ id:c.id, name:c.name, built_at:c.built_at, rules_version:c.rules_version, items:c.items.map(i=>({ version:i.version_key, hash:i.hash })) }, "manifest", 0, 3)}</div></details>
     </div>`).join("");
-  return `<div class="panel"><h2>Build a collection</h2>
-      <p class="muted">Rule: per task, include the newest version that is <b>accepted</b> and still passes the <b>current</b> QC rules. Built collections are frozen snapshots; later edits never change them.</p>
+  return `<div class="panel"><h2>Step 2 · Batch accepted tasks for Aster</h2>
+      <div class="info">Collections come <b>after</b> review. Only versions a reviewer accepted in <b>1 · Tasks &amp; review</b>, and that still pass the current QC rules, can ship. Each collection is a frozen snapshot of exact version + hash; later edits never change it.</div>
       <label>Scope (pools)</label>
-      <div class="row">${pools.map(p => `<label class="checkbox"><input type="checkbox" class="scope" value="${p}" ${ui.scope.includes(p)?"checked":""}> Pool ${p}</label>`).join("")}</div>
+      <div class="row">${["A","B","C","D"].map(p => `<label class="checkbox"><input type="checkbox" class="scope" value="${p}" ${ui.scope.includes(p)?"checked":""}> Pool ${p}</label>`).join("")}</div>
       <div class="muted small">Default excludes A: Aster already has many templated support tasks, so A adds little new signal.</div>
-      <label for="colName">Name</label><input type="text" id="colName" value="Aster pilot batch ${state.collections.length + 1}">
-      <div class="actions"><button class="btn primary" data-act="build">Build collection</button></div>
-      <h3 style="margin-top:16px">Preview under rules v${state.rules_version}</h3>
-      <table><tr><th>Task</th><th>Latest version</th><th>Would ship</th></tr>${preview}</table>
-    </div>${cols || `<div class="muted">No collections built yet.</div>`}`;
+      <h3 style="margin-top:16px">Would ship under rules v${state.rules_version}</h3>
+      <table><tr><th>Task</th><th>Latest version</th><th>Ships as</th></tr>${preview}</table>
+      <label for="colName">Collection name</label><input type="text" id="colName" value="Aster pilot batch ${state.collections.length + 1}">
+      <div class="actions"><button class="btn primary" data-act="build" ${eligible ? "" : "disabled"}>Build collection (${eligible} task${eligible===1?"":"s"})</button>
+        ${eligible ? "" : `<span class="muted small">Nothing to ship yet. Accept tasks in 1 · Tasks &amp; review first.</span>`}</div>
+    </div>${cols}`;
 }
 
 function viewChecks() {
-  const r = ui.checks;
-  return `<div class="panel"><h2>Self-checks</h2>
-    <p class="muted">Runs the required flows against a fresh copy of the seed data using the same functions the UI calls. It does not touch your current session.</p>
-    <div class="actions"><button class="btn primary" data-act="runChecks">Run self-checks</button></div>
-    ${r ? `<p><b>${r.filter(x=>x.ok).length}/${r.length} passed</b></p><table>${r.map(x => `<tr><td class="${x.ok?"pass":"fail"}">${x.ok?"PASS":"FAIL"}</td><td>${esc(x.name)}${x.err?` <span class="fail small">(${esc(x.err)})</span>`:""}</td></tr>`).join("")}</table>` : ""}
-  </div>`;
+  const r = ui.tests;
+  const ids = ["G0","G1","G2","G3","G4"].concat(state.rules_version >= 2 ? ["G5"] : []);
+  const rows = Object.values(state.tasks).map(t => { const v = latestVersion(t), g = gates(state, v.key);
+    const cell = x => x.pending ? `<td class="${x.pass?"pass":"fail"}" title="draft — pending reviewer check">${x.pass?"✓":"✗"}<span class="pend">⏳</span></td>` : `<td class="${x.pass?"pass":"fail"}">${x.pass?"✓":"✗"}</td>`;
+    const fails = g.filter(x => !x.pass).map(x => x.id), pend = g.some(x => x.pending);
+    const verdict = fails.length ? `<span class="fail">FAIL (${fails.join(", ")})</span>` : pend ? `<span class="pend">Passes draft — confirm check</span>` : `<span class="pass">PASS</span>`;
+    return `<tr><td><b>${t.task_id}</b></td><td class="mono">${v.key}</td>${g.map(cell).join("")}<td>${verdict}</td><td>${statusBadge(versionStatus(state, v.key))}</td></tr>`; }).join("");
+  return `<div class="panel"><h2>Task QC report — are the tasks good?</h2>
+      <p class="sub">Live view of your current session: each task's latest version against the current QC rules (v${state.rules_version}). Failures here are expected — they are what the review is for. ⏳ = the reviewer check is still a draft.</p>
+      <table><tr><th>Task</th><th>Version</th>${ids.map(i => `<th>${i}</th>`).join("")}<th>QC result</th><th>Decision</th></tr>${rows}</table>
+      <p class="small muted">Expected at seed: B01, A01 and B02 pass once the reviewer confirms; C01 fails G1–G4 (snapshot-17 missing, no reference run, outcome never checkable, failure caused by the environment); D01 fails G2/G3/G4 (false pass from a message grader); under rules v2, B02 fails G5.</p>
+    </div>
+    <div class="panel"><h2>Platform tests — does Nexus behave correctly?</h2>
+      <p class="sub">These test the Nexus workflow itself, not task quality. For example, “C01 cannot be accepted” passes because Nexus correctly <b>blocked</b> a bad task. They run on a fresh copy of the seed data and do not touch your session.</p>
+      <div class="actions"><button class="btn primary" data-act="runTests">Run platform tests</button></div>
+      ${r ? `<p><b id="testSummary">${r.filter(x=>x.ok).length}/${r.length} passed</b></p><table><tr><th></th><th>Expected behaviour</th><th>What happened</th></tr>${r.map(x => `<tr><td class="${x.ok?"pass":"fail"}">${x.ok?"PASS":"FAIL"}</td><td>${esc(x.expect)}</td><td class="small mono">${esc(x.got)}</td></tr>`).join("")}</table>` : ""}
+    </div>`;
+}
+
+// Collapsible JSON tree (MongoDB Compass-style): objects/arrays expand on click.
+function tree(val, key, depth, openDepth = 2) {
+  const k = key !== null ? `<span class="k">${esc(key)}</span>: ` : "";
+  if (val && typeof val === "object") {
+    const isArr = Array.isArray(val), keys = Object.keys(val);
+    const label = isArr ? `<span class="t">Array[${keys.length}]</span>` : `<span class="t">{${keys.length} field${keys.length===1?"":"s"}}</span>`;
+    const hint = !isArr && val.key ? ` <span class="t">${esc(val.key)}</span>` : !isArr && val.id ? ` <span class="t">${esc(val.id)}</span>` : "";
+    return `<details ${depth < openDepth ? "open" : ""}><summary>${k}${label}${hint}</summary>${keys.map(kk => tree(val[kk], isArr ? `[${kk}]` : kk, depth + 1, openDepth)).join("")}</details>`;
+  }
+  const cls = typeof val === "string" ? "s" : typeof val === "number" ? "n" : "b";
+  return `<div class="leaf">${k}<span class="${cls}">${esc(JSON.stringify(val))}</span></div>`;
 }
 
 function viewData() {
-  return `<div class="panel"><h2>Activity log</h2><table>${state.log.slice().reverse().map(l => `<tr><td class="mono small">${l.at}</td><td>${esc(l.type)}</td><td>${esc(l.detail)}</td></tr>`).join("")}</table></div>
-    <div class="panel"><h2>Raw state (storage model)</h2>
-      <p class="muted small">tasks → versions (immutable content + hash + evidence) · reviews → one version_key + hash + gate/evidence snapshot · collections → frozen list of {version_key, hash}.</p>
+  return `<div class="panel"><h2>Storage model</h2>
+      <p class="sub">Click to expand. tasks → versions → { content (definition + hash), run (runner/grader), check (reviewer) } · reviews → version_key + hash + gate/run/check snapshot · collections → frozen list of { version_key, hash }.</p>
       <div class="actions"><button class="btn" data-act="reset">Reset to seed data</button></div>
-      <pre>${esc(JSON.stringify(state, null, 2))}</pre></div>`;
+      <div class="tree">${["tasks","reviews","collections","rules_version"].map(k => tree(state[k], k, 1, 2)).join("")}</div></div>
+    <div class="panel"><h2>Activity log</h2><table>${state.log.slice().reverse().map(l => `<tr><td class="mono small">${l.at}</td><td>${esc(l.type)}</td><td>${esc(l.detail)}</td></tr>`).join("")}</table></div>`;
 }
 
 document.addEventListener("click", ev => {
@@ -510,12 +630,16 @@ document.addEventListener("click", ev => {
                  covers:[...document.querySelectorAll(".edCover:checked")].map(x=>+x.value) } };
       content.grader.covers = content.grader.covers.filter(i => i < content.success_clauses.length);
       const v = saveNewVersion(state, t.task_id, content, $("edNote").value, "author-1");
-      ui.editing = false; ui.versionKey = v.key; flash("ok", `Saved ${v.key} (#${v.hash}). ${prev.key} is unchanged. Record new evidence, then review.`);
+      ui.editing = false; ui.versionKey = v.key; flash("ok", `Saved ${v.key} (#${v.hash}). ${prev.key} is unchanged. Next: record a run (②), then the reviewer check (③).`);
     }
-    else if (act === "saveEv") {
-      updateEvidence(state, ui.versionKey, { reported_run_result:$("evResult").value, failure_cause:$("evCause").value, outcome_verified:$("evOutcome").value,
-        reset_verified:$("evReset").checked, reference_solved:$("evRef").checked, run_evidence:$("evRun").value.trim(), reference_evidence:$("evRefTxt").value.trim() });
-      flash("ok", `Evidence saved for ${ui.versionKey}.`);
+    else if (act === "saveRun") {
+      recordRun(state, ui.versionKey, { grader_verdict:$("runVerdict").value, trace:$("runTrace").value.trim() });
+      flash("ok", `Run of ${ui.versionKey} recorded. Next: reviewer check (③).`);
+    }
+    else if (act === "confirmCheck") {
+      confirmReviewerCheck(state, ui.versionKey, { outcome_verified:$("ckOutcome").value, failure_cause:$("ckCause").value,
+        reset_verified:$("ckReset").checked, reference_solved:$("ckRef").checked, reference_evidence:$("ckRefTxt").value.trim() }, $("rvName") ? $("rvName").value.trim() : "expert-1");
+      flash("ok", `Reviewer check confirmed for ${ui.versionKey}. See the gates (④) and decide (⑤).`);
     }
     else if (act === "accept" || act === "return") {
       const r = recordReview(state, ui.versionKey, act, $("rvReason").value, $("rvName").value.trim());
@@ -524,10 +648,10 @@ document.addEventListener("click", ev => {
     else if (act === "build") {
       ui.scope = [...document.querySelectorAll(".scope:checked")].map(x => x.value);
       const c = buildCollection(state, $("colName").value.trim(), ui.scope);
-      flash("ok", `${c.id} built: ${c.items.map(i=>i.version_key).join(", ") || "no task versions"}.`);
+      flash("ok", `${c.id} built: ${c.items.map(i=>i.version_key).join(", ")}.`);
     }
-    else if (act === "runChecks") ui.checks = runSelfChecks();
-    else if (act === "reset") { state = makeState(); ui.checks = null; flash("ok", "State reset to seed data."); }
+    else if (act === "runTests") ui.tests = runPlatformTests();
+    else if (act === "reset") { state = makeState(); ui.tests = null; flash("ok", "State reset to seed data."); }
   } catch (e) { flash("err", e.message); }
   render();
 });

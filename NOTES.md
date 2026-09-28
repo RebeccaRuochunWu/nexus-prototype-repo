@@ -4,7 +4,7 @@
 
 **Bet.** About 40 verified B tasks, plus C once its resets are repaired, instead of 500. Target capability: holding constraints across documents, policies, and tools. Aster has templated volume; it can't cheaply build expert-solved, state-graded tasks with attributed failures.
 
-**Why B and C (12 expert-hours: B 8h, C 4h).** B matches Aster's gap (constraints across contracts, quotes, orders), an expert solved it, and it fails 44%: hard but learnable. C is expert-sourced; its 96% failure is inflated by fixable reset bugs. D needs a new grader first (engineering work).
+**Why B and C (12 expert-hours: B 8h, C 4h).** B matches Aster's gap (constraints across contracts, quotes, orders), is expert-solved, and fails 44%: hard but learnable. C is expert-sourced; its 96% failure is inflated by fixable reset bugs. D needs a new grader first (engineering work).
 
 **Rejected:** A: 12 labels on one template, data Aster already has.
 
@@ -25,15 +25,15 @@
 **MVP (3):** a versioned task registry with evidence attached per version; evidence-gated accept/return decisions with reasons; a collection builder that pins exact version plus hash.
 **Deferred:** runner auto-import; a customer feedback portal (ops logs it manually).
 
-**Minimum data:** task → immutable versions (instruction, state, tools, success clauses, grader coverage, hash) → evidence → reviews (version, hash, gate snapshot) → collections (frozen version + hash list).
+**Minimum data:** task → immutable versions (instruction, state, tools, success clauses, grader coverage, hash) → grader verdict → reviewer check → reviews (version, hash, gate snapshot) → collections (frozen version + hash list).
 
 **Assumption:** B-style constraint failures transfer to Aster's private tasks.
-**Decision tested:** can reviewers make consistent, evidence-backed accept/return calls fast enough to ship a verified collection?
+**Decision tested:** can reviewers make consistent, evidence-backed calls fast enough to ship a verified collection?
 
 ## Task 2 · Prototype judgment
 
 - **Useful model failure: B01.** Every gate passes, and the agent dropped the arrival-date constraint → accept.
-- **Needs repair: C01.** snapshot-17 is missing and there's no reference run → return, fix the reset (v2), re-record evidence, re-review → accept. The collection pins C01@v2.
+- **Needs repair: C01.** snapshot-17 is missing and there's no reference run → return, fix the reset (v2), re-run, re-check → accept. The collection pins C01@v2.
 - **D01's false pass** is blocked by G3; A01 is valid but out of scope.
 
 **Worked:** return → edit → re-review; edits never alter built collections.
@@ -41,7 +41,7 @@
 
 ## Task 3 · Launch, measure, adapt
 
-**First 48h.** Day 1 kickoff: the 30-minute call confirms target constraints and held-out evaluation; the integration engineer runs one task end to end. Days 1–2: three experts sample 10 B tasks across all six workflows, tag failure causes, and double-review two. One expert repairs C and runs the return path. If Aster is unavailable: use their stated constraints, send questions async, and hold out an internal split.
+**First 48h.** Day 1 kickoff: the 30-minute call confirms target constraints and held-out evaluation; the integration engineer runs one task end to end. Days 1–2: three experts sample 10 B tasks across all six workflows, tag failure causes, and double-review two. One expert repairs C and runs the return path. If Aster is unavailable: use their stated constraints, send questions async, hold out an internal split.
 
 **Owners.** Week 1: 12h investigation, 3h authoring, 3h QC. Weeks 2–4: 9h authoring and repair, 9h QC per week. The data ops lead owns feedback: traces, pre-reads, logging against versions.
 
@@ -61,8 +61,8 @@
 ## Setup, checks, disclosure
 
 1. Open `index.html` in any browser (no install).
-2. Click **Self-checks → Run** (19 flows).
+2. **QC report & tests → Run platform tests** (20).
 3. Try B01 accept, C01 return/edit, then Collections under rules v1 vs v2.
 
-`tests/walkthrough.mjs` (headless UI test): 16/16 pass. In-memory state; refresh resets.
+`tests/walkthrough.mjs` (headless UI test): 23/23 pass. In-memory state; refresh resets.
 **Time:** ~3 h. **AI:** built with Claude (research, code, drafting); I reviewed and ran every flow.
